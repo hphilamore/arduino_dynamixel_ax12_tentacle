@@ -53,43 +53,56 @@ void loop()
   //         Serial.println("");
   
           
-  //        Serial.println(char(Buffer[0]), DEC);                     // print first character in buffer 
+  //        Serial.println(char(Buffer[0]), DEC);                     
   //        Serial.print(" ");
 
-            int x_pos = float(char(Buffer[0]));
+            int x_pos = float(char(Buffer[0]));                              // First character in buffer 
+            int serial_max = 50;                                             // Max value expected over serial
+            int serial_min = -50;                                            // Min value expected over serial
+            int servo_val = map(x_pos, serial_min, serial_max, 0, 1023);     // Map value to full range of servo
+            Serial.print("x_pos = ");
+            Serial.print(x_pos);
+            Serial.print(", servo_val = ");
+            Serial.println(servo_val);
+            Serial.end(); 
+            Dynamixel.begin(1000000,2);
+            Dynamixel.setEndless(1,OFF);
+            Dynamixel.moveSpeed(1,servo_val,200);                   // program servo 
+            Dynamixel.end();
+            Serial.begin(9600); 
   
   
-//            if(float(char(Buffer[0]))>0){
-            if(x_pos>0){
-              Serial.println("positive x position");
-              Serial.end(); 
-              Dynamixel.begin(1000000,2);
-              Dynamixel.setEndless(1,OFF);
-              //Dynamixel.moveSpeed(1,0,200);
-              //Dynamixel.moveSpeed(2,400,200);
-              int serial_max = 50;                                   // Max value expected over serial
-              int servo_val = map(x_pos, 0, serial_max, 511, 1023);  // Map value to half range of servo
-              Dynamixel.moveSpeed(1,servo_val,200);                  // program servo 
-              Dynamixel.end();
-              Serial.begin(9600); 
-              }
-            else{
-              Serial.println("negative x position");
-              Serial.end(); 
-              Dynamixel.begin(1000000,2);
-              Dynamixel.setEndless(1,OFF);
-              //Dynamixel.moveSpeed(1,1023,200);
-              //Dynamixel.moveSpeed(2,200,200);
-              int serial_min = -50;                                   // Min value expected over serial
-              int servo_val = map(x_pos, serial_min, 0, 0, 511);      // Map value to half range of servo
-              Dynamixel.moveSpeed(1,servo_val,200);                   // program servo 
-              Dynamixel.end();
-              Serial.begin(9600); 
-            }
-          
-         }
-         Serial.end();                      // End the Serial Comms
-         Dynamixel.begin(1000000,2);        // Begin Servo Comms
+////            if(float(char(Buffer[0]))>0){
+//            if(x_pos>0){
+//              Serial.println("positive x position");
+//              Serial.end(); 
+//              Dynamixel.begin(1000000,2);
+//              Dynamixel.setEndless(1,OFF);
+//              //Dynamixel.moveSpeed(1,0,200);
+//              //Dynamixel.moveSpeed(2,400,200);
+//              int serial_max = 50;                                   // Max value expected over serial
+//              int servo_val = map(x_pos, 0, serial_max, 511, 1023);  // Map value to half range of servo
+//              Dynamixel.moveSpeed(1,servo_val,200);                  // program servo 
+//              Dynamixel.end();
+//              Serial.begin(9600); 
+//              }
+//            else{
+//              Serial.println("negative x position");
+//              Serial.end(); 
+//              Dynamixel.begin(1000000,2);
+//              Dynamixel.setEndless(1,OFF);
+//              //Dynamixel.moveSpeed(1,1023,200);
+//              //Dynamixel.moveSpeed(2,200,200);
+//              int serial_min = -50;                                   // Min value expected over serial
+//              int servo_val = map(x_pos, serial_min, 0, 0, 511);      // Map value to half range of servo
+//              Dynamixel.moveSpeed(1,servo_val,200);                   // program servo 
+//              Dynamixel.end();
+//              Serial.begin(9600); 
+//            }
+//          
+//         }
+//         Serial.end();                      // End the Serial Comms
+//         Dynamixel.begin(1000000,2);        // Begin Servo Comms
   
     }
   
