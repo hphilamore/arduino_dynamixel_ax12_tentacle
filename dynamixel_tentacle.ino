@@ -3,9 +3,9 @@
 
 
 //****************************************************************************************************************************************
-/*
- *   Variables to set
- */
+
+//   Variables to set
+
 const int operating_mode = 1;                   // Choice of : 0 = potentiometer, 1 = serial, 2 = reset
 
 //****************************************************************************************************************************************
@@ -35,7 +35,8 @@ void setup()
 void loop()
 {
 
-    if(operating_mode == 0){
+    // SERIAL
+    if(operating_mode == 0){                 
   
         Dynamixel.end();                      // End Servo comms
         Serial.begin(9600);                   // Begin Serial comms
@@ -54,15 +55,21 @@ void loop()
           
   //        Serial.println(char(Buffer[0]), DEC);                     // print first character in buffer 
   //        Serial.print(" ");
+
+            int x_pos = float(char(Buffer[0]));
   
   
-            if(float(char(Buffer[0]))>0){
+//            if(float(char(Buffer[0]))>0){
+            if(x_pos>0){
               Serial.println("positive x position");
               Serial.end(); 
               Dynamixel.begin(1000000,2);
               Dynamixel.setEndless(1,OFF);
-              Dynamixel.moveSpeed(1,0,200);
+              //Dynamixel.moveSpeed(1,0,200);
               //Dynamixel.moveSpeed(2,400,200);
+              int serial_max = 50;                                   // Max value expected over serial
+              int servo_val = map(x_pos, 0, serial_max, 511, 1023);  // Map value to half range of servo
+              Dynamixel.moveSpeed(1,servo_val,200);                  // program servo 
               Dynamixel.end();
               Serial.begin(9600); 
               }
@@ -71,18 +78,22 @@ void loop()
               Serial.end(); 
               Dynamixel.begin(1000000,2);
               Dynamixel.setEndless(1,OFF);
-              Dynamixel.moveSpeed(1,1023,200);
+              //Dynamixel.moveSpeed(1,1023,200);
               //Dynamixel.moveSpeed(2,200,200);
+              int serial_min = -50;                                   // Min value expected over serial
+              int servo_val = map(x_pos, serial_min, 0, 0, 511);      // Map value to half range of servo
+              Dynamixel.moveSpeed(1,servo_val,200);                   // program servo 
               Dynamixel.end();
               Serial.begin(9600); 
             }
           
          }
-         Serial.end();                         // End the Serial Comms
-         Dynamixel.begin(1000000,2);           // Begin Servo Comms
+         Serial.end();                      // End the Serial Comms
+         Dynamixel.begin(1000000,2);        // Begin Servo Comms
   
     }
   
+    // POTENTIOMETER
     else if (operating_mode == 1){
       Dynamixel.end();                      // End Servo comms
       Serial.begin(9600);                   // Begin Serial comms
@@ -93,11 +104,16 @@ void loop()
       Serial.end();                         // End the Serial Comms
       Dynamixel.begin(1000000,2);           // Begin Servo Comms
       Dynamixel.setEndless(1,OFF);
-      Dynamixel.moveSpeed(1,(pot_val-300)*10,200);
+      int pot_max = 1023;                   // Min value expected from potentiometer input
+      int pot_min = 0;                      // Max value expected from potentiometer input
+      int servo_val = map(pot_val, pot_min, pot_max, 0, 1023);  // Map value to full range of servo
       //Dynamixel.moveSpeed(1,pot_val,200);
+      //Dynamixel.moveSpeed(1,(pot_val-300)*10,200);
+      Dynamixel.moveSpeed(1,servo_val,200); // program servo 
       
       }
 
+      // RESET 
       else{
         }
   
