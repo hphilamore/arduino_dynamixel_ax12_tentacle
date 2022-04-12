@@ -6,7 +6,7 @@
 
 //   Variables to set
 
-const int operating_mode = 1;                   // Choice of : 0 = potentiometer, 1 = serial, 2 = reset
+const int operating_mode = 2;                   // Choice of : 0 = potentiometer, 1 = serial, 2 = reset
 
 //****************************************************************************************************************************************
 
@@ -67,7 +67,7 @@ void loop()
             Serial.end(); 
             Dynamixel.begin(1000000,2);
             Dynamixel.setEndless(1,OFF);
-            Dynamixel.moveSpeed(1,servo_val,200);                   // program servo 
+            Dynamixel.moveSpeed(1,servo_val,200);                            // Program servo 
             Dynamixel.end();
             Serial.begin(9600); 
   
@@ -104,24 +104,28 @@ void loop()
 //         Serial.end();                      // End the Serial Comms
 //         Dynamixel.begin(1000000,2);        // Begin Servo Comms
   
+      }
     }
   
     // POTENTIOMETER
     else if (operating_mode == 1){
       Dynamixel.end();                      // End Servo comms
+      
       Serial.begin(9600);                   // Begin Serial comms
       pot_val = analogRead(pot_pin);
-      Serial.print(pot_val);
-      Serial.print(" ");
-      Serial.println((pot_val-300)*10);
-      Serial.end();                         // End the Serial Comms
-      Dynamixel.begin(1000000,2);           // Begin Servo Comms
-      Dynamixel.setEndless(1,OFF);
       int pot_max = 1023;                   // Min value expected from potentiometer input
       int pot_min = 0;                      // Max value expected from potentiometer input
       int servo_val = map(pot_val, pot_min, pot_max, 0, 1023);  // Map value to full range of servo
+      Serial.print("pot_val = ");
+      Serial.print(pot_val);
+      Serial.print(", servo_val = ");
+      Serial.println(servo_val);
+      Serial.end(); 
+      
       //Dynamixel.moveSpeed(1,pot_val,200);
       //Dynamixel.moveSpeed(1,(pot_val-300)*10,200);
+      Dynamixel.begin(1000000,2);           // Begin Servo Comms
+      Dynamixel.setEndless(1,OFF);
       Dynamixel.moveSpeed(1,servo_val,200); // program servo 
       
       }
