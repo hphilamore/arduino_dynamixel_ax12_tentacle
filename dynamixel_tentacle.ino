@@ -1,18 +1,19 @@
-#include <SoftwareSerial.h>
 #include <DynamixelSerial.h>
+#include <SoftwareSerial.h>
 
 
 //****************************************************************************************************************************************
 
 //   Variables to set
 
-const int operating_mode = 2;                   // Choice of : 0 = potentiometer, 1 = serial, 2 = reset
+const int operating_mode = 1;     // Choice of : 0 = serial, 1 = potentiometer, 2 = assign new ID, 3 = reset to centre
+const int id = 3;                 // servo ID 
 
 //****************************************************************************************************************************************
 
 
 
-const int _BUFFER_SIZE = 3;       // number of inputs to recive over serial 
+const int _BUFFER_SIZE = 1;       // number of inputs to recive over serial 
 int _n_bytes;                     // variable to indicate to store number of bytes of data recieved over serial
 //char *_buffer;               
 byte Buffer[_BUFFER_SIZE];        // buffer to store info received over serial
@@ -26,9 +27,9 @@ void setup()
 {
   Dynamixel.begin(1000000,2);    // Init. Servo 1 @ 1Mbps and Pin Control 2
   SoftSerial.begin(9600);
-  Dynamixel.setEndless(1,OFF);
-  Dynamixel.moveSpeed(1,511,200);// Init. servos at central position
-  pinMode(pot_pin, INPUT);
+  Dynamixel.setEndless(id,OFF);
+  Dynamixel.moveSpeed(id,511,200);// Init. servos at central position
+  pinMode(pot_pin, INPUT);       // Input pin for slider/ potentiometer 
   delay(1000);
 }
 
@@ -36,7 +37,7 @@ void loop()
 {
 
     // SERIAL
-    if(operating_mode == 0){                 
+    if(operating_mode == 0){  
   
         Dynamixel.end();                      // End Servo comms
         Serial.begin(9600);                   // Begin Serial comms
@@ -66,8 +67,8 @@ void loop()
             Serial.println(servo_val);
             Serial.end(); 
             Dynamixel.begin(1000000,2);
-            Dynamixel.setEndless(1,OFF);
-            Dynamixel.moveSpeed(1,servo_val,200);                            // Program servo 
+            Dynamixel.setEndless(id,OFF);
+            Dynamixel.moveSpeed(id,servo_val,200);                            // Program servo 
             Dynamixel.end();
             Serial.begin(9600); 
   
@@ -109,6 +110,8 @@ void loop()
   
     // POTENTIOMETER
     else if (operating_mode == 1){
+      //int id = 3;
+      
       Dynamixel.end();                      // End Servo comms
       
       Serial.begin(9600);                   // Begin Serial comms
@@ -125,9 +128,21 @@ void loop()
       //Dynamixel.moveSpeed(1,pot_val,200);
       //Dynamixel.moveSpeed(1,(pot_val-300)*10,200);
       Dynamixel.begin(1000000,2);           // Begin Servo Comms
-      Dynamixel.setEndless(1,OFF);
-      Dynamixel.moveSpeed(1,servo_val,200); // program servo 
+      Dynamixel.setEndless(id,OFF);
+      Dynamixel.moveSpeed(id,servo_val,200); // program servo 
       
+      }
+
+      else if(operating_mode == 2){
+        //Dynamixel.setId (ID , newID );
+        Dynamixel.setID (2 , 3 );
+//      for(int i=1; i<255; i++){
+//        Dynamixel.end();                      // End Servo comms
+//        Serial.begin(9600);                   // Begin Serial comms
+//        Serial.print(i);
+//        Serial.print(" ");
+//        Serial.println(Dynamixel.ping(i));
+//        }
       }
 
       // RESET 
