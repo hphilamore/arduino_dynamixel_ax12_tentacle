@@ -4,9 +4,14 @@
  * Operating Mode 1 - Position is mapped to analog value of potentiometer
  * Operating Mode 2 - Servo ID changed  
  * Operating Mode 3 - Position is reset to central position 
+ * 
+ * Required libraries from: https://sourceforge.net/projects/dynamixelforarduino/files/
  */
 
-#include <DynamixelSerial.h>
+
+
+// https://sourceforge.net/projects/dynamixelforarduino/files/
+#include <DynamixelSerial1.h> 
 #include <SoftwareSerial.h>
 
 
@@ -15,7 +20,7 @@
 //   Variables to set
 
 const int operating_mode = 1;     // Choice of : 0 = serial, 1 = potentiometer, 2 = assign new ID, 3 = reset to centre
-const int id = 3;                 // servo ID 
+const int id = 2;                 // servo ID 
 
 //****************************************************************************************************************************************
 
@@ -27,6 +32,7 @@ int _n_bytes;                     // variable to indicate to store number of byt
 byte Buffer[_BUFFER_SIZE];        // buffer to store info received over serial
 const int pot_pin = A4;
 float pot_val;
+int Position;
 
 SoftwareSerial SoftSerial(9, 8);  // software serial pins tx=9, rx=8
 
@@ -94,17 +100,21 @@ void loop()
       Serial.print("pot_val = ");
       Serial.print(pot_val);
       Serial.print(", servo_val = ");
-      Serial.println(servo_val);
+      Serial.print(servo_val);
+      Serial.print(", servo_pos = ");
+      Serial.print(Position);
+      Serial.println("");
       Serial.end(); 
       Dynamixel.begin(1000000,2);           // Begin Servo Comms
       Dynamixel.setEndless(id,OFF);
       Dynamixel.moveSpeed(id,servo_val,200); // program servo 
+      Position = Dynamixel.readPosition(id);       // Request and Print the Position 
       
       }
 
       else if(operating_mode == 2){
         //Dynamixel.setId (ID , newID );
-        Dynamixel.setID (2 , 3 );
+        Dynamixel.setID (1 , 2 );
       }
 
       // RESET 
