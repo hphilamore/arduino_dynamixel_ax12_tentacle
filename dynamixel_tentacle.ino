@@ -12,7 +12,7 @@
 
 
 // https://sourceforge.net/projects/dynamixelforarduino/files/
-#include <DynamixelSerial1.h> 
+#include <DynamixelSerial.h> 
 #include <SoftwareSerial.h>
 
 
